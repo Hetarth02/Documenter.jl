@@ -330,6 +330,30 @@ As with `@index` if `Pages` is not provided then all pages are included. The def
 `UnitRange`s, to make it possible to configure also the minimum header level to be shown.
 `Depth = 2:3` can be used to include only headers with levels 2-3, for example.
 
+!!! tip "Replicating sidebar"
+
+    In some cases it might be desirable to replicate some subsection of the sidebar in an `@contents` block.
+    A possible pattern to achieve this without duplicating code is to define the `pages` keyword entry through a global variable in `make.jl`, e.g.
+
+    ```julia
+    SUBSECTION_PAGES = ["subsection/a.md", "subsection/b.md"]
+    makedocs(
+        pages = [
+            "index.md",
+            "Subsection" => SUBSECTION_PAGES,
+        ...
+    ```
+    
+    That variable will exist in the `Main` module and can be reused in the `@contents` and other blocks, e.g.
+
+    ````markdown
+    ```@contents
+    Pages = Main.SUBSECTION_PAGES
+    ```
+    ````
+    
+    Documenter will then list the contents of the "Subsection" pages, and they will always appear in the same order as they are in the sidebar.
+
 ## `@example` block
 
 Evaluates the code block and inserts the result of the last expression into the final document along with the
@@ -723,7 +747,7 @@ using the `@raw` block.
 
 ````markdown
 ```@raw html
-<svg style="display: block; margin: 0 auto;" width="5em" heigth="5em">
+<svg style="display: block; margin: 0 auto;" width="5em" height="5em">
 	<circle cx="2.5em" cy="2.5em" r="2em" stroke="black" stroke-width=".1em" fill="red" />
 </svg>
 ```
@@ -732,7 +756,7 @@ using the `@raw` block.
 It will show up as follows, with code having been copied over verbatim to the HTML file.
 
 ```@raw html
-<svg style="display: block; margin: 0 auto;" width="5em" heigth="5em">
+<svg style="display: block; margin: 0 auto;" width="5em" height="5em">
 	<circle cx="2.5em" cy="2.5em" r="2em" stroke="black" stroke-width=".1em" fill="red" />
     (SVG)
 </svg>

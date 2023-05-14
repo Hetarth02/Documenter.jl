@@ -1,39 +1,55 @@
 // libraries: jquery
 // arguments: $
 
-var is_expanded = true;
+var isExpanded = true;
 
 $(document).on("click", ".docstring header", function () {
+  let articleToggleTitle = "Expand docstring";
+
   if ($(this).siblings("section").is(":visible")) {
     $(this)
       .find(".docstring-article-toggle-button")
-      .removeClass("fa-chevron-up")
-      .addClass("fa-chevron-down");
-    $(this).find(".docstring-article-toggle-button").prop("title", "Expand article");
+      .removeClass("fa-chevron-down")
+      .addClass("fa-chevron-right");
   } else {
     $(this)
       .find(".docstring-article-toggle-button")
-      .removeClass("fa-chevron-down")
-      .addClass("fa-chevron-up");
-    $(this).find(".docstring-article-toggle-button").prop("title", "Collapse article");
+      .removeClass("fa-chevron-right")
+      .addClass("fa-chevron-down");
+
+    articleToggleTitle = "Collapse docstring";
   }
+
+  $(this).find(".docstring-article-toggle-button").prop("title", articleToggleTitle);
   $(this).siblings("section").slideToggle();
 });
 
 $(document).on("click", ".docs-article-toggle-button", function () {
-  if (is_expanded) {
+  let articleToggleTitle = "Expand docstring";
+  let navArticleToggleTitle = "Expand all docstrings";
+
+  if (isExpanded) {
     $(this).removeClass("fa-chevron-up").addClass("fa-chevron-down");
-    $(".docstring-article-toggle-button").removeClass("fa-chevron-up").addClass("fa-chevron-down");
-    $(this).prop("title", "Expand all Articles");
-    $(".docstring-article-toggle-button").prop("title", "Expand article");
+    $(".docstring-article-toggle-button")
+      .removeClass("fa-chevron-down")
+      .addClass("fa-chevron-right");
+
+    isExpanded = false;
+
     $(".docstring section").slideUp();
-    is_expanded = false;
   } else {
-    $(this).prop("title", "Collapse all Articles");
-    $(".docstring-article-toggle-button").prop("title", "Collapse article");
     $(this).removeClass("fa-chevron-down").addClass("fa-chevron-up");
-    $(".docstring-article-toggle-button").removeClass("fa-chevron-down").addClass("fa-chevron-up");
+    $(".docstring-article-toggle-button")
+      .removeClass("fa-chevron-right")
+      .addClass("fa-chevron-down");
+
+    isExpanded = true;
+    articleToggleTitle = "Collapse docstring";
+    navArticleToggleTitle = "Collapse all docstrings";
+
     $(".docstring section").slideDown();
-    is_expanded = true;
   }
+
+  $(this).prop("title", navArticleToggleTitle);
+  $(".docstring-article-toggle-button").prop("title", articleToggleTitle);
 });

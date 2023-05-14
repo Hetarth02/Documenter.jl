@@ -7,6 +7,7 @@
   max-width: 100%;
 
   > header {
+    cursor: pointer;
     display: flex;
     flex-grow: 1;
     align-items: stretch;
@@ -22,6 +23,7 @@
     }
 
     .docstring-article-toggle-button {
+      min-width: 1.1rem;
       padding: 0.2rem 0.2rem 0.2rem 0;
     }
 
