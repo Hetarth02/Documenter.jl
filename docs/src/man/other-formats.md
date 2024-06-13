@@ -24,6 +24,9 @@ the version number will be appended to the title.
 The `makedocs` argument `authors` should also be specified, it will be used for the
 `\authors` field in the tex document.
 
+!!! warning "Known issue"
+    If the `makedocs` argument `pages` is not assigned, Documenter will generate tex documents without contents. ([#2132](@ref))
+
 ### Compiling using natively installed latex
 
 The following is required to build the documentation:
@@ -63,9 +66,9 @@ the builder to call. You also need to tell Documenter to use the docker image, i
 installed tex which is the default. This is done with the `LaTeX` specifier:
 
 ```
-using DocumenterLaTeX
+using Documenter
 makedocs(
-    format = LaTeX(platform = "docker"),
+    format = Documenter.LaTeX(platform = "docker"),
     ...
 )
 ```
@@ -85,9 +88,9 @@ There's a possibility to save only the `.tex` file and skip the PDF compilation.
 For this purpose use the `platform="none"` keyword:
 
 ```
-using DocumenterLaTeX
+using Documenter
 makedocs(
-    format = LaTeX(platform = "none"),
+    format = Documenter.LaTeX(platform = "none"),
     ...
 )
 ```
