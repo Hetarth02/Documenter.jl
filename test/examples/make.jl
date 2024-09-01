@@ -218,6 +218,7 @@ htmlbuild_pages = Any[
     "Manual" => [
         "man/tutorial.md",
         "man/style.md",
+        "man/page with space.md",
     ],
     hide("hidden.md"),
     "Library" => [
@@ -282,6 +283,7 @@ function html_doc(
                 mathengine = mathengine,
                 highlights = ["erlang", "erlang-repl"],
                 footer = "This footer has been customized.",
+                inventory_version = "$(Documenter.DOCUMENTER_VERSION)+test",
                 htmlkwargs...
             ),
             warnonly = warnonly,
@@ -578,7 +580,7 @@ end
             root  = examples_root,
             build = "builds/sizethreshold-defaults-fail",
             source = "src.megapage",
-            format = Documenter.HTML(size_threshold_ignore = ["index.md"]),
+            format = Documenter.HTML(size_threshold_ignore = ["index.md", "subdir/subpage.md"]),
             debug = true,
         )
     catch e

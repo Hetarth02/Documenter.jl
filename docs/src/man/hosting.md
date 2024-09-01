@@ -52,7 +52,7 @@ file. Note that the snippet below will not work by itself and must be accompanie
 jobs:
   include:
     - stage: "Documentation"
-      julia: 1.6
+      julia: 1
       os: linux
       script:
         - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
@@ -63,7 +63,7 @@ jobs:
 
 where the `julia:` and `os:` entries decide the worker from which the docs are built and
 deployed. In the example above we will thus build and deploy the documentation from a linux
-worker running Julia 1.6. For more information on how to setup a build stage, see the Travis
+worker running Julia 1 (the latest stable version). For more information on how to setup a build stage, see the Travis
 manual for [Build Stages](https://docs.travis-ci.com/user/build-stages).
 
 The three lines in the `script:` section do the following:
@@ -191,15 +191,17 @@ on:
 jobs:
   build:
     permissions:
+      actions: write
       contents: write
+      pull-requests: read
       statuses: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.6'
-      - uses: julia-actions/cache@v1
+          version: '1'
+      - uses: julia-actions/cache@v2
       - name: Install dependencies
         run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
       - name: Build and deploy
@@ -212,7 +214,7 @@ jobs:
 This will install Julia, checkout the correct commit of your repository, and run the
 build of the documentation. The `julia-version:`, `julia-arch:` and `os:` entries decide
 the environment from which the docs are built and deployed. The example above builds and deploys
-the documentation from an Ubuntu worker running Julia 1.6.
+the documentation from an Ubuntu worker running Julia 1.
 
 !!! tip
     The example above is a basic workflow that should suit most projects. For more information on
@@ -284,6 +286,17 @@ See GitHub's manual for
 [Encrypted secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)
 for more information.
 
+### Permissions
+
+The following [GitHub Actions job or workflow permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) are required to successfully use [`deploydocs`](#the-deploydocs-function):
+
+```yaml
+permissions:
+  contents: write  # Required when authenticating with `GITHUB_TOKEN`, not needed when authenticating with SSH deploy keys
+  pull-requests: read  # Required when using `push_preview=true`
+  statuses: write  # Optional, used to report documentation build statuses
+```
+
 ### Add code coverage from documentation builds
 
 If you want code run during the documentation deployment to be covered by Codecov,
@@ -297,7 +310,7 @@ are uploaded to Codecov:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       - uses: julia-actions/julia-processcoverage@v1
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
 ```
 
 ## `docs/Project.toml`
@@ -503,6 +516,9 @@ Unless a custom domain is being used, the pages are found at:
 https://USER_NAME.github.io/PACKAGE_NAME.jl/vX.Y.Z
 https://USER_NAME.github.io/PACKAGE_NAME.jl/dev
 ```
+
+!!! tip
+    If you need Documenter to maintain [a `CNAME` file](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) for you can use the `cname` argument of [`deploydocs`](@ref) to specify the domain.
 
 By default Documenter will create a link called `stable` that points to the latest release
 
