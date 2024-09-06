@@ -202,23 +202,7 @@ function linkcheck(node::MarkdownAST.Node, link::MarkdownAST.Link, doc::Document
     end
 
     if !haskey(doc.internal.locallinks, link)
-        timeout = doc.user.linkcheck_timeout
-        null_file = @static Sys.iswindows() ? "nul" : "/dev/null"
-        # In some cases, web servers (e.g. docs.github.com as of 2022) will reject requests
-        # that declare a non-browser user agent (curl specifically passes 'curl/X.Y'). In
-        # case of docs.github.com, the server returns a 403 with a page saying "The request
-        # is blocked". However, spoofing a realistic browser User-Agent string is enough to
-        # get around this, and so here we simply pass the example Chrome UA string from the
-        # Mozilla developer docs, but only is it's a HTTP(S) request.
-        #
-        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent#chrome_ua_string
-        fakebrowser  = startswith(uppercase(link.destination), "HTTP") ? [
-            "--user-agent",
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
-            "-H",
-            "accept-encoding: gzip, deflate, br",
-        ] : ""
-        cmd = `curl $(method === :HEAD ? "-sI" : "-s") --proto =http,https,ftp,ftps $(fakebrowser) $(link.destination) --max-time $timeout -o $null_file --write-out "%{http_code} %{url_effective} %{redirect_url}"`
+        cmd = _linkcheck_curl(method, link.destination; timeout=doc.user.linkcheck_timeout, useragent=doc.user.linkcheck_useragent)
 
         local result
         try
@@ -271,9 +255,35 @@ function linkcheck(node::MarkdownAST.Node, docs_node::Documenter.DocsNode, doc::
     end
 end
 
-
 linkcheck_ismatch(r::String, url) = (url == r)
 linkcheck_ismatch(r::Regex, url) = occursin(r, url)
+
+const _LINKCHECK_DEFAULT_USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
+
+function _linkcheck_curl(method::Symbol, url::AbstractString; timeout::Real, useragent::Union{AbstractString, Nothing})
+    null_file = @static Sys.iswindows() ? "nul" : "/dev/null"
+    # In some cases, web servers (e.g. docs.github.com as of 2022) will reject requests
+    # that declare a non-browser user agent (curl specifically passes 'curl/X.Y'). In
+    # case of docs.github.com, the server returns a 403 with a page saying "The request
+    # is blocked". However, spoofing a realistic browser User-Agent string is enough to
+    # get around this, and so here we simply pass the example Chrome UA string from the
+    # Mozilla developer docs, but only is it's a HTTP(S) request.
+    #
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent#chrome_ua_string
+    fakebrowser  = if startswith(uppercase(url), "HTTP")
+        headers = [
+            "-H",
+            "accept-encoding: gzip, deflate, br",
+        ]
+        if !isnothing(useragent)
+            push!(headers, "--user-agent", useragent)
+        end
+        headers
+    else
+        String[]
+    end
+    return `curl $(method === :HEAD ? "-sI" : "-s") --proto =http,https,ftp,ftps $(fakebrowser) $(url) --max-time $timeout -o $null_file --write-out "%{http_code} %{url_effective} %{redirect_url}"`
+end
 
 # Automatic Pkg.add() GitHub remote check
 # ---------------------------------------

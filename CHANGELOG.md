@@ -3,7 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
+## Version [v1.7.0] - 2024-09-04
+
+### Added
+
+* The `User-Agent` header set in the linkcheck HTTP(S) requests can now be customized with the `linkcheck_useragent` option to `makedocs`. ([#2557], [#2562], [#2571])
+* Admonitions with category `todo` are now colored purple. Previously they were default-colored like all other unknown admonitions categories. ([#2526])
+* A `checkdocs_ignored_modules` keyword argument to `makedocs(...)`, which prevents `checkdocs` from warning about missing documentation in certain modules. ([#2233])
+
+### Changed
+
+* The default `User-Agent` header set in the linkcheck HTTP(S) requests now reports `Chrome/127.0.0.0` instead of `Chrome/51.0.2704.103`. This _may_ change how servers interpret the linkcheck requests, and cause previously passing checks to failing, but it is more likely to fix previous spurious failures. ([#2557], [#2569])
 
 ### Fixed
 
@@ -1378,6 +1388,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.4.1]: https://github.com/JuliaDocs/Documenter.jl/releases/tag/v1.4.1
 [v1.5.0]: https://github.com/JuliaDocs/Documenter.jl/releases/tag/v1.5.0
 [v1.6.0]: https://github.com/JuliaDocs/Documenter.jl/releases/tag/v1.6.0
+[v1.7.0]: https://github.com/JuliaDocs/Documenter.jl/releases/tag/v1.7.0
 [#198]: https://github.com/JuliaDocs/Documenter.jl/issues/198
 [#245]: https://github.com/JuliaDocs/Documenter.jl/issues/245
 [#487]: https://github.com/JuliaDocs/Documenter.jl/issues/487
@@ -1812,6 +1823,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2216]: https://github.com/JuliaDocs/Documenter.jl/issues/2216
 [#2217]: https://github.com/JuliaDocs/Documenter.jl/issues/2217
 [#2232]: https://github.com/JuliaDocs/Documenter.jl/issues/2232
+[#2233]: https://github.com/JuliaDocs/Documenter.jl/issues/2233
 [#2236]: https://github.com/JuliaDocs/Documenter.jl/issues/2236
 [#2237]: https://github.com/JuliaDocs/Documenter.jl/issues/2237
 [#2245]: https://github.com/JuliaDocs/Documenter.jl/issues/2245
@@ -1878,10 +1890,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2499]: https://github.com/JuliaDocs/Documenter.jl/issues/2499
 [#2513]: https://github.com/JuliaDocs/Documenter.jl/issues/2513
 [#2514]: https://github.com/JuliaDocs/Documenter.jl/issues/2514
+[#2526]: https://github.com/JuliaDocs/Documenter.jl/issues/2526
 [#2549]: https://github.com/JuliaDocs/Documenter.jl/issues/2549
 [#2551]: https://github.com/JuliaDocs/Documenter.jl/issues/2551
+[#2557]: https://github.com/JuliaDocs/Documenter.jl/issues/2557
 [#2560]: https://github.com/JuliaDocs/Documenter.jl/issues/2560
 [#2561]: https://github.com/JuliaDocs/Documenter.jl/issues/2561
+[#2562]: https://github.com/JuliaDocs/Documenter.jl/issues/2562
+[#2569]: https://github.com/JuliaDocs/Documenter.jl/issues/2569
+[#2571]: https://github.com/JuliaDocs/Documenter.jl/issues/2571
 [JuliaLang/julia#36953]: https://github.com/JuliaLang/julia/issues/36953
 [JuliaLang/julia#38054]: https://github.com/JuliaLang/julia/issues/38054
 [JuliaLang/julia#39841]: https://github.com/JuliaLang/julia/issues/39841

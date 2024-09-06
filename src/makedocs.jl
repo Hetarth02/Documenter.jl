@@ -178,7 +178,15 @@ are `:all` (check all names; the default), `:exports` (check only exported names
 `:none` (no checks are performed).
 
 By default, if the document check detect any errors, it will fail the documentation build.
-This behavior can be relaxed with the `warnonly` keyword.
+This behavior can be relaxed with the `warnonly` or `checkdocs_ignored_modules` keywords.
+
+**`checkdocs_ignored_modules`** prevents `checkdocs` from checking modules supplied as a list
+of module objects. It will also cause all submodules of these module to be ignored. It can be
+useful for completely private modules including modules which have been vendored from
+elsewhere.
+
+Note that `checkdocs_ignored_modules` does not conversely verify that these docstrings are *not*
+included in the documentation.
 
 **`linkcheck`** -- if set to `true` [`makedocs`](@ref) uses `curl` to check the status codes
 of external-pointing links, to make sure that they are up-to-date. The links and their
@@ -191,6 +199,22 @@ ignored.
 
 **`linkcheck_timeout`** configures how long `curl` waits (in seconds) for a link request to
 return a response before giving up. The default is 10 seconds.
+
+**`linkcheck_useragent`** can be used to override the user agent string used by the HTTP and
+HTTPS requests made when checking for broken links. If set to `nothing`, it uses the default
+user agent string of the library/tool used to actually perform the requests (currently, the
+system's `curl` binary).
+
+If unset, Documenter uses the following user agent string:
+
+```
+$(_LINKCHECK_DEFAULT_USERAGENT)
+```
+
+This is set to mimic a realistic web browser. However, the exact user agent string is subject
+to change. As such, it is possible that breakages can occur when Documenter's version changes,
+but the goal is to set the user agent such that it would be accepted by as many web servers as
+possible.
 
 **`warnonly`** can be used to control whether the `makedocs` build fails with an error, or
 simply prints a warning if it detects any issues with the document. Additionally, a `Symbol`
